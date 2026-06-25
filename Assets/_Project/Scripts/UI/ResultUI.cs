@@ -8,20 +8,17 @@ public class ResultUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI rewardText;
     [SerializeField] private Button continueButton;
 
-    void OnEnable()
+    void Start()
     {
-        GameManager.Instance.OnStateChanged += OnStateChanged;
+        if (GameManager.Instance != null)
+            GameManager.Instance.OnStateChanged += OnStateChanged;
+        continueButton.onClick.AddListener(() => GameManager.Instance.ChangeState(GameState.QuestBoard));
     }
 
-    void OnDisable()
+    void OnDestroy()
     {
         if (GameManager.Instance != null)
             GameManager.Instance.OnStateChanged -= OnStateChanged;
-    }
-
-    void Start()
-    {
-        continueButton.onClick.AddListener(() => GameManager.Instance.ChangeState(GameState.QuestBoard));
     }
 
     private void OnStateChanged(GameState state)

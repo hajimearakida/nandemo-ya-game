@@ -18,12 +18,13 @@ public class MainSceneController : MonoBehaviour
     [SerializeField] private GameObject panelTiming;
     [SerializeField] private GameObject panelSpecial;
 
-    void OnEnable()
+    void Start()
     {
-        GameManager.Instance.OnStateChanged += OnStateChanged;
+        if (GameManager.Instance != null)
+            GameManager.Instance.OnStateChanged += OnStateChanged;
     }
 
-    void OnDisable()
+    void OnDestroy()
     {
         if (GameManager.Instance != null)
             GameManager.Instance.OnStateChanged -= OnStateChanged;
