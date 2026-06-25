@@ -16,7 +16,6 @@ public class MinigameManager : MonoBehaviour
     {
         if (Instance != null) { Destroy(gameObject); return; }
         Instance = this;
-        DontDestroyOnLoad(gameObject);
     }
 
     public void StartMinigame(QuestData quest)

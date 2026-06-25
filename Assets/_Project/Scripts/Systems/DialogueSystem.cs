@@ -18,7 +18,6 @@ public class DialogueSystem : MonoBehaviour
     {
         if (Instance != null) { Destroy(gameObject); return; }
         Instance = this;
-        DontDestroyOnLoad(gameObject);
     }
 
     public void StartDialogue(DialogueData data)

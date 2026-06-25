@@ -20,7 +20,6 @@ public class EndingManager : MonoBehaviour
     {
         if (Instance != null) { Destroy(gameObject); return; }
         Instance = this;
-        DontDestroyOnLoad(gameObject);
     }
 
     public EndingType DetermineEnding()
