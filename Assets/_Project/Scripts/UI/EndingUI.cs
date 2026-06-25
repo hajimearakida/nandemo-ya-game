@@ -8,20 +8,17 @@ public class EndingUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI endingBodyText;
     [SerializeField] private Button titleReturnButton;
 
-    void OnEnable()
+    void Start()
     {
-        GameManager.Instance.OnStateChanged += OnStateChanged;
+        if (GameManager.Instance != null)
+            GameManager.Instance.OnStateChanged += OnStateChanged;
+        titleReturnButton.onClick.AddListener(() => GameManager.Instance.LoadScene("TitleScene"));
     }
 
-    void OnDisable()
+    void OnDestroy()
     {
         if (GameManager.Instance != null)
             GameManager.Instance.OnStateChanged -= OnStateChanged;
-    }
-
-    void Start()
-    {
-        titleReturnButton.onClick.AddListener(() => GameManager.Instance.LoadScene("TitleScene"));
     }
 
     private void OnStateChanged(GameState state)

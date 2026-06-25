@@ -12,24 +12,21 @@ public class QuestBoardUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI reputationText;
     [SerializeField] private Button endDayButton;
 
-    void OnEnable()
+    void Start()
     {
-        Refresh();
-        GameManager.Instance.OnStateChanged += OnStateChanged;
-        EconomyManager.Instance.OnValuesChanged += Refresh;
+        if (GameManager.Instance != null)
+            GameManager.Instance.OnStateChanged += OnStateChanged;
+        if (EconomyManager.Instance != null)
+            EconomyManager.Instance.OnValuesChanged += Refresh;
+        endDayButton.onClick.AddListener(() => GameManager.Instance.AdvanceDay());
     }
 
-    void OnDisable()
+    void OnDestroy()
     {
         if (GameManager.Instance != null)
             GameManager.Instance.OnStateChanged -= OnStateChanged;
         if (EconomyManager.Instance != null)
             EconomyManager.Instance.OnValuesChanged -= Refresh;
-    }
-
-    void Start()
-    {
-        endDayButton.onClick.AddListener(() => GameManager.Instance.AdvanceDay());
     }
 
     private void OnStateChanged(GameState state)

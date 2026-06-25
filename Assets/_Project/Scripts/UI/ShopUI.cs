@@ -9,14 +9,16 @@ public class ShopUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI goldText;
     [SerializeField] private Button closeButton;
 
-    void OnEnable()
+    void Start()
     {
-        GameManager.Instance.OnStateChanged += OnStateChanged;
-        EconomyManager.Instance.OnValuesChanged += Refresh;
+        if (GameManager.Instance != null)
+            GameManager.Instance.OnStateChanged += OnStateChanged;
+        if (EconomyManager.Instance != null)
+            EconomyManager.Instance.OnValuesChanged += Refresh;
         closeButton.onClick.AddListener(() => GameManager.Instance.ChangeState(GameState.QuestBoard));
     }
 
-    void OnDisable()
+    void OnDestroy()
     {
         if (GameManager.Instance != null)
             GameManager.Instance.OnStateChanged -= OnStateChanged;

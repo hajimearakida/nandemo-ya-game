@@ -9,20 +9,17 @@ public class DayStartUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI reputationText;
     [SerializeField] private Button startButton;
 
-    void OnEnable()
+    void Start()
     {
-        GameManager.Instance.OnStateChanged += OnStateChanged;
+        if (GameManager.Instance != null)
+            GameManager.Instance.OnStateChanged += OnStateChanged;
+        startButton.onClick.AddListener(() => GameManager.Instance.ChangeState(GameState.QuestBoard));
     }
 
-    void OnDisable()
+    void OnDestroy()
     {
         if (GameManager.Instance != null)
             GameManager.Instance.OnStateChanged -= OnStateChanged;
-    }
-
-    void Start()
-    {
-        startButton.onClick.AddListener(() => GameManager.Instance.ChangeState(GameState.QuestBoard));
     }
 
     private void OnStateChanged(GameState state)
