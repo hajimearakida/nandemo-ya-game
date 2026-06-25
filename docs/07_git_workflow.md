@@ -12,7 +12,7 @@ main
 |----------|------|
 | `main` | リリース用。Steamに出すビルドはここから作る |
 | `staging` | 検証環境。複数機能をまとめて動作確認する |
-| `feature/xxx` | 機能単位の作業ブランチ。**mainから切って**、stagingで検証後にmainにマージする |
+| `feature/xxx` | 機能単位の作業ブランチ。**mainから切って**、stagingにマージして検証する |
 
 ## 機能ブランチの命名規則
 
@@ -57,9 +57,15 @@ git checkout staging
 git merge feature/xxx
 git push
 
-# 4. 検証OKならmainにマージ
+# ※ mainへのマージはリリース時のみ
+```
+
+## リリース時の流れ
+
+```
+# stagingで最終確認が取れたらmainにマージ
 git checkout main
-git merge feature/xxx
+git merge staging
 git push
 ```
 
