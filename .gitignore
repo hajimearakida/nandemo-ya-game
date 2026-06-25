@@ -1,0 +1,41 @@
+# Unity生成フォルダ（再生成可能なため除外）
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+MemoryCaptures/
+
+# Unity自動生成ファイル
+*.pidb
+*.unityproj
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+sysinfo.txt
+Crash/
+
+# Visual Studio / Rider
+.vs/
+.idea/
+*.csproj
+*.sln
+
+# OS生成ファイル
+.DS_Store
+Thumbs.db
+
+# ビルド成果物
+*.apk
+*.aab
+*.unitypackage
+ExportedObj/
