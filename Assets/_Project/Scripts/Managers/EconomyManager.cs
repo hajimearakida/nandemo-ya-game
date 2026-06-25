@@ -16,7 +16,6 @@ public class EconomyManager : MonoBehaviour
     {
         if (Instance != null) { Destroy(gameObject); return; }
         Instance = this;
-        DontDestroyOnLoad(gameObject);
     }
 
     public void AddGold(int amount)

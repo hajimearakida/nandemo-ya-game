@@ -17,7 +17,6 @@ public class QuestManager : MonoBehaviour
     {
         if (Instance != null) { Destroy(gameObject); return; }
         Instance = this;
-        DontDestroyOnLoad(gameObject);
 
         foreach (var q in allQuests)
             _questDict[q.questId] = q;
@@ -69,6 +68,8 @@ public class QuestManager : MonoBehaviour
         {
             EconomyManager.Instance.AddGold(quest.rewardGold);
             EconomyManager.Instance.AddReputation(quest.rewardReputation);
+            if (!string.IsNullOrEmpty(quest.characterId))
+                CharacterManager.Instance.AddRelation(quest.characterId, quest.rewardRelation);
         }
 
         SaveSystem.Save(save);

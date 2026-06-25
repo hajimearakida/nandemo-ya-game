@@ -13,7 +13,6 @@ public class CharacterManager : MonoBehaviour
     {
         if (Instance != null) { Destroy(gameObject); return; }
         Instance = this;
-        DontDestroyOnLoad(gameObject);
     }
 
     public int GetRelation(string characterId)

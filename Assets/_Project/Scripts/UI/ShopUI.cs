@@ -15,7 +15,8 @@ public class ShopUI : MonoBehaviour
             GameManager.Instance.OnStateChanged += OnStateChanged;
         if (EconomyManager.Instance != null)
             EconomyManager.Instance.OnValuesChanged += Refresh;
-        closeButton.onClick.AddListener(() => GameManager.Instance.ChangeState(GameState.QuestBoard));
+        if (closeButton != null)
+            closeButton.onClick.AddListener(() => GameManager.Instance.ChangeState(GameState.QuestBoard));
     }
 
     void OnDestroy()
@@ -34,30 +35,37 @@ public class ShopUI : MonoBehaviour
 
     private void Refresh()
     {
-        goldText.text = $"所持金: {EconomyManager.Instance.Gold}G";
+        if (goldText != null)
+            goldText.text = $"所持金: {EconomyManager.Instance.Gold}G";
 
         foreach (Transform child in itemContainer)
             Destroy(child.gameObject);
 
+        if (ShopSystem.Instance == null) return;
+
         foreach (var item in ShopSystem.Instance.GetAllItems())
         {
             var entry = Instantiate(itemEntryPrefab, itemContainer);
-            var texts = entry.GetComponentsInChildren<TextMeshProUGUI>();
-            texts[0].text = item.itemName;
-            texts[1].text = item.description;
-            texts[2].text = $"{item.cost}G";
-
-            var btn = entry.GetComponentInChildren<Button>();
+            var label = entry.GetComponentInChildren<TextMeshProUGUI>();
             bool purchased = ShopSystem.Instance.IsPurchased(item.itemId);
-            btn.interactable = !purchased;
-            btn.GetComponentInChildren<TextMeshProUGUI>().text = purchased ? "購入済み" : "購入";
 
-            var captured = item.itemId;
-            btn.onClick.AddListener(() =>
+            if (label != null)
             {
-                ShopSystem.Instance.TryPurchase(captured);
-                Refresh();
-            });
+                string status = purchased ? "【購入済み】" : $"{item.cost}G";
+                label.text = $"{item.itemName}　{status}\n<size=70%>{item.description}</size>";
+            }
+
+            var btn = entry.GetComponent<Button>();
+            if (btn != null)
+            {
+                btn.interactable = !purchased;
+                var captured = item.itemId;
+                btn.onClick.AddListener(() =>
+                {
+                    ShopSystem.Instance.TryPurchase(captured);
+                    Refresh();
+                });
+            }
         }
     }
 }

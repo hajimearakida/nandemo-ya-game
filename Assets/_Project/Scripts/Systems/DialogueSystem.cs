@@ -83,7 +83,6 @@ public class DialogueSystem : MonoBehaviour
     private void Complete(string resultFlag)
     {
         _current = null;
-        GameManager.Instance?.ChangeState(GameState.Result);
         OnDialogueCompleted?.Invoke(resultFlag);
     }
 }
