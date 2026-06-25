@@ -752,7 +752,7 @@ public static class SceneSetupTool
     // ══════════════════════════════════════════════════════════
     private static void WireMinigameManager()
     {
-        var mm = Object.FindObjectOfType<MinigameManager>();
+        var mm = Object.FindFirstObjectByType<MinigameManager>();
         if (mm == null) { Debug.LogWarning("[SceneSetup] MinigameManager が見つかりません"); return; }
 
         var canvas = GameObject.Find("Canvas");
@@ -777,7 +777,7 @@ public static class SceneSetupTool
 
     private static void WireMainSceneController(GameObject canvas)
     {
-        var msc = Object.FindObjectOfType<MainSceneController>();
+        var msc = Object.FindFirstObjectByType<MainSceneController>();
         if (msc == null) { Debug.LogWarning("[SceneSetup] MainSceneController が見つかりません"); return; }
 
         var t = canvas.transform;
@@ -811,19 +811,19 @@ public static class SceneSetupTool
 
     private static void WireGameBootstrap()
     {
-        var gb = Object.FindObjectOfType<GameBootstrap>();
+        var gb = Object.FindFirstObjectByType<GameBootstrap>();
         if (gb == null) { Debug.LogWarning("[SceneSetup] GameBootstrap が見つかりません"); return; }
 
         var so = new SerializedObject(gb);
-        so.FindProperty("gameManager").objectReferenceValue        = Object.FindObjectOfType<GameManager>();
-        so.FindProperty("economyManager").objectReferenceValue     = Object.FindObjectOfType<EconomyManager>();
-        so.FindProperty("questManager").objectReferenceValue       = Object.FindObjectOfType<QuestManager>();
-        so.FindProperty("characterManager").objectReferenceValue   = Object.FindObjectOfType<CharacterManager>();
-        so.FindProperty("minigameManager").objectReferenceValue    = Object.FindObjectOfType<MinigameManager>();
-        so.FindProperty("dialogueSystem").objectReferenceValue     = Object.FindObjectOfType<DialogueSystem>();
-        so.FindProperty("shopSystem").objectReferenceValue         = Object.FindObjectOfType<ShopSystem>();
-        so.FindProperty("achievementManager").objectReferenceValue = Object.FindObjectOfType<AchievementManager>();
-        so.FindProperty("endingManager").objectReferenceValue      = Object.FindObjectOfType<EndingManager>();
+        so.FindProperty("gameManager").objectReferenceValue        = Object.FindFirstObjectByType<GameManager>();
+        so.FindProperty("economyManager").objectReferenceValue     = Object.FindFirstObjectByType<EconomyManager>();
+        so.FindProperty("questManager").objectReferenceValue       = Object.FindFirstObjectByType<QuestManager>();
+        so.FindProperty("characterManager").objectReferenceValue   = Object.FindFirstObjectByType<CharacterManager>();
+        so.FindProperty("minigameManager").objectReferenceValue    = Object.FindFirstObjectByType<MinigameManager>();
+        so.FindProperty("dialogueSystem").objectReferenceValue     = Object.FindFirstObjectByType<DialogueSystem>();
+        so.FindProperty("shopSystem").objectReferenceValue         = Object.FindFirstObjectByType<ShopSystem>();
+        so.FindProperty("achievementManager").objectReferenceValue = Object.FindFirstObjectByType<AchievementManager>();
+        so.FindProperty("endingManager").objectReferenceValue      = Object.FindFirstObjectByType<EndingManager>();
         so.ApplyModifiedPropertiesWithoutUndo();
         EditorUtility.SetDirty(gb);
         Debug.Log("[SceneSetup] GameBootstrap 参照割り当て完了");

@@ -301,7 +301,7 @@ public static class AssetGeneratorTool
         where TComponent : Component
         where TAsset     : Object
     {
-        var comp = Object.FindObjectOfType<TComponent>();
+        var comp = Object.FindFirstObjectByType<TComponent>();
         if (comp == null)
         {
             Debug.LogWarning($"[Generator] {typeof(TComponent).Name} がシーンに見つかりません。手動で割り当ててください。");
