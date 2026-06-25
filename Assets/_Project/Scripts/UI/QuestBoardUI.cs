@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -12,12 +11,16 @@ public class QuestBoardUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI reputationText;
     [SerializeField] private Button endDayButton;
 
+    private QuestData _pendingQuest;
+
     void Start()
     {
         if (GameManager.Instance != null)
             GameManager.Instance.OnStateChanged += OnStateChanged;
         if (EconomyManager.Instance != null)
             EconomyManager.Instance.OnValuesChanged += Refresh;
+        if (DialogueSystem.Instance != null)
+            DialogueSystem.Instance.OnDialogueCompleted += OnDialogueCompleted;
         endDayButton.onClick.AddListener(() => GameManager.Instance.AdvanceDay());
     }
 
@@ -27,6 +30,8 @@ public class QuestBoardUI : MonoBehaviour
             GameManager.Instance.OnStateChanged -= OnStateChanged;
         if (EconomyManager.Instance != null)
             EconomyManager.Instance.OnValuesChanged -= Refresh;
+        if (DialogueSystem.Instance != null)
+            DialogueSystem.Instance.OnDialogueCompleted -= OnDialogueCompleted;
     }
 
     private void OnStateChanged(GameState state)
@@ -52,16 +57,46 @@ public class QuestBoardUI : MonoBehaviour
         {
             var entry = Instantiate(questEntryPrefab, questListContainer);
             var label = entry.GetComponentInChildren<TextMeshProUGUI>();
-            label.text = $"[{Stars(quest.difficulty)}]  {quest.questName}\n<size=70%>{quest.description}</size>";
+            if (label != null)
+                label.text = $"[{Stars(quest.difficulty)}]  {quest.questName}\n<size=70%>{quest.description}</size>";
 
             var captured = quest;
-            entry.GetComponent<Button>().onClick.AddListener(() => SelectQuest(captured));
+            var btn = entry.GetComponent<Button>();
+            if (btn != null)
+                btn.onClick.AddListener(() => SelectQuest(captured));
         }
     }
 
     private void SelectQuest(QuestData quest)
     {
-        GameManager.Instance.ChangeState(GameState.Dialogue);
+        _pendingQuest = quest;
+
+        if (quest.dialogueData != null)
+        {
+            DialogueSystem.Instance.StartDialogue(quest.dialogueData);
+            GameManager.Instance.ChangeState(GameState.Dialogue);
+        }
+        else
+        {
+            MinigameManager.Instance.StartMinigame(quest);
+        }
+    }
+
+    private void OnDialogueCompleted(string resultFlag)
+    {
+        if (_pendingQuest == null) return;
+
+        if (resultFlag == "accept" || string.IsNullOrEmpty(resultFlag))
+        {
+            var quest = _pendingQuest;
+            _pendingQuest = null;
+            MinigameManager.Instance.StartMinigame(quest);
+        }
+        else
+        {
+            _pendingQuest = null;
+            GameManager.Instance.ChangeState(GameState.QuestBoard);
+        }
     }
 
     private string Stars(int difficulty) => difficulty switch

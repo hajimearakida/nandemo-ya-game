@@ -9,56 +9,87 @@ public class PuzzleMinigame : BaseMinigame
 {
     [SerializeField] private TextMeshProUGUI instructionText;
     [SerializeField] private TextMeshProUGUI selectedOrderText;
-    [SerializeField] private Transform itemContainer;
-    [SerializeField] private GameObject itemButtonPrefab;
+    [SerializeField] private Button[] itemButtons;
+    [SerializeField] private TextMeshProUGUI[] itemLabels;
     [SerializeField] private Button confirmButton;
     [SerializeField] private Button resetButton;
     [SerializeField] private PuzzleData puzzleData;
 
     private List<string> _selected = new();
-    private Dictionary<string, Button> _itemButtons = new();
+    private string[] _shuffled;
+
+    private static readonly PuzzleData FallbackData = new PuzzleData
+    {
+        instruction = "作業を正しい順番に並べてください",
+        correctOrder = new[] { "準備する", "道具を選ぶ", "作業する", "確認する" }
+    };
 
     protected override void StartGame()
     {
         _selected.Clear();
-        _itemButtons.Clear();
-        instructionText.text = puzzleData.instruction;
-        confirmButton.onClick.RemoveAllListeners();
-        confirmButton.onClick.AddListener(CheckAnswer);
-        resetButton.onClick.RemoveAllListeners();
-        resetButton.onClick.AddListener(ResetSelection);
-        BuildItems();
+        var data = (puzzleData != null && puzzleData.correctOrder != null && puzzleData.correctOrder.Length > 0)
+            ? puzzleData : FallbackData;
+
+        if (instructionText != null) instructionText.text = data.instruction;
+
+        _shuffled = data.correctOrder.OrderBy(_ => UnityEngine.Random.value).ToArray();
+
+        if (confirmButton != null)
+        {
+            confirmButton.onClick.RemoveAllListeners();
+            confirmButton.onClick.AddListener(() => CheckAnswer(data));
+        }
+        if (resetButton != null)
+        {
+            resetButton.onClick.RemoveAllListeners();
+            resetButton.onClick.AddListener(ResetSelection);
+        }
+
+        SetupButtons();
         UpdateDisplay();
     }
 
-    private void BuildItems()
+    private void SetupButtons()
     {
-        foreach (Transform child in itemContainer)
-            Destroy(child.gameObject);
-
-        var shuffled = puzzleData.correctOrder.OrderBy(_ => UnityEngine.Random.value).ToArray();
-        foreach (var item in shuffled)
+        for (int i = 0; i < itemButtons.Length; i++)
         {
-            var btn = Instantiate(itemButtonPrefab, itemContainer);
-            btn.GetComponentInChildren<TextMeshProUGUI>().text = item;
-            var captured = item;
-            var btnComp = btn.GetComponent<Button>();
-            btnComp.onClick.AddListener(() => ToggleItem(captured));
-            _itemButtons[item] = btnComp;
+            if (itemButtons[i] == null) continue;
+            bool active = i < _shuffled.Length;
+            itemButtons[i].gameObject.SetActive(active);
+            if (!active) continue;
+
+            if (itemLabels != null && i < itemLabels.Length && itemLabels[i] != null)
+                itemLabels[i].text = _shuffled[i];
+
+            var img = itemButtons[i].GetComponent<Image>();
+            if (img != null) img.color = new Color(0.2f, 0.35f, 0.55f);
+
+            string captured = _shuffled[i];
+            int idx = i;
+            itemButtons[i].onClick.RemoveAllListeners();
+            itemButtons[i].onClick.AddListener(() => ToggleItem(captured, idx));
         }
     }
 
-    private void ToggleItem(string item)
+    private void ToggleItem(string item, int btnIndex)
     {
         if (_selected.Contains(item))
         {
             _selected.Remove(item);
-            _itemButtons[item].GetComponent<Image>().color = Color.white;
+            if (itemButtons[btnIndex] != null)
+            {
+                var img = itemButtons[btnIndex].GetComponent<Image>();
+                if (img != null) img.color = new Color(0.2f, 0.35f, 0.55f);
+            }
         }
         else
         {
             _selected.Add(item);
-            _itemButtons[item].GetComponent<Image>().color = new Color(1f, 0.9f, 0.4f);
+            if (itemButtons[btnIndex] != null)
+            {
+                var img = itemButtons[btnIndex].GetComponent<Image>();
+                if (img != null) img.color = new Color(0.8f, 0.75f, 0.2f);
+            }
         }
         UpdateDisplay();
     }
@@ -66,21 +97,26 @@ public class PuzzleMinigame : BaseMinigame
     private void ResetSelection()
     {
         _selected.Clear();
-        foreach (var btn in _itemButtons.Values)
-            btn.GetComponent<Image>().color = Color.white;
+        for (int i = 0; i < itemButtons.Length; i++)
+        {
+            if (itemButtons[i] == null) continue;
+            var img = itemButtons[i].GetComponent<Image>();
+            if (img != null) img.color = new Color(0.2f, 0.35f, 0.55f);
+        }
         UpdateDisplay();
     }
 
-    private void CheckAnswer()
+    private void CheckAnswer(PuzzleData data)
     {
-        Complete(_selected.SequenceEqual(puzzleData.correctOrder));
+        Complete(_selected.SequenceEqual(data.correctOrder));
     }
 
     private void UpdateDisplay()
     {
-        selectedOrderText.text = _selected.Count > 0
-            ? string.Join(" → ", _selected)
-            : "順番に選んでください";
+        if (selectedOrderText != null)
+            selectedOrderText.text = _selected.Count > 0
+                ? string.Join(" → ", _selected)
+                : "順番に選んでください";
     }
 }
 

@@ -30,10 +30,14 @@ public class TimingMinigame : BaseMinigame
         _running = true;
         _successCount = 0;
         _attemptCount = 0;
-        gauge.value = 0f;
-        resultText.text = "";
-        tapButton.onClick.RemoveAllListeners();
-        tapButton.onClick.AddListener(OnTap);
+
+        if (gauge != null) gauge.value = 0f;
+        if (resultText != null) resultText.text = "";
+        if (tapButton != null)
+        {
+            tapButton.onClick.RemoveAllListeners();
+            tapButton.onClick.AddListener(OnTap);
+        }
         UpdateInstruction();
         PositionSuccessZone();
     }
@@ -45,7 +49,7 @@ public class TimingMinigame : BaseMinigame
         _gaugeValue += (_ascending ? 1f : -1f) * gaugeSpeed * Time.deltaTime;
         if (_gaugeValue >= 1f) { _gaugeValue = 1f; _ascending = false; }
         if (_gaugeValue <= 0f) { _gaugeValue = 0f; _ascending = true; }
-        gauge.value = _gaugeValue;
+        if (gauge != null) gauge.value = _gaugeValue;
     }
 
     private void OnTap()
@@ -56,7 +60,7 @@ public class TimingMinigame : BaseMinigame
         if (hit) _successCount++;
         _attemptCount++;
 
-        resultText.text = hit ? "いい感じ！" : "ズレた…";
+        if (resultText != null) resultText.text = hit ? "いい感じ！" : "ズレた…";
         UpdateInstruction();
 
         if (_attemptCount >= totalAttempts)
@@ -68,13 +72,16 @@ public class TimingMinigame : BaseMinigame
 
     private void UpdateInstruction()
     {
-        instructionText.text = $"成功: {_successCount} / {requiredSuccesses}  残り: {totalAttempts - _attemptCount}回";
+        if (instructionText != null)
+            instructionText.text = $"ゲージが光っている間にタップ！\n成功: {_successCount} / {requiredSuccesses}　残り: {totalAttempts - _attemptCount}回";
     }
 
     private void PositionSuccessZone()
     {
-        if (successZoneIndicator == null) return;
-        float gaugeWidth = gauge.GetComponent<RectTransform>().rect.width;
+        if (successZoneIndicator == null || gauge == null) return;
+        var gaugeRect = gauge.GetComponent<RectTransform>();
+        if (gaugeRect == null) return;
+        float gaugeWidth = gaugeRect.rect.width;
         float centerX = (successZoneMin + successZoneMax) * 0.5f * gaugeWidth - gaugeWidth * 0.5f;
         float zoneWidth = (successZoneMax - successZoneMin) * gaugeWidth;
         successZoneIndicator.anchoredPosition = new Vector2(centerX, 0f);

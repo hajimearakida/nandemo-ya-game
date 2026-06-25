@@ -25,6 +25,7 @@ public class QuestData : ScriptableObject
     public int rewardReputation;
     public int rewardRelation;
     public string dialogueId;
+    public DialogueData dialogueData;
     public UnlockCondition unlockCondition;
 }
 

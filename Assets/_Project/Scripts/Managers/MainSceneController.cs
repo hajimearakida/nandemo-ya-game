@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class MainSceneController : MonoBehaviour
 {
+    public static MainSceneController Instance { get; private set; }
+
     [Header("UI Panels")]
     [SerializeField] private GameObject panelDayStart;
     [SerializeField] private GameObject panelQuestBoard;
@@ -18,6 +20,12 @@ public class MainSceneController : MonoBehaviour
     [SerializeField] private GameObject panelTiming;
     [SerializeField] private GameObject panelSpecial;
 
+    void Awake()
+    {
+        if (Instance != null) { Destroy(this); return; }
+        Instance = this;
+    }
+
     void Start()
     {
         if (GameManager.Instance != null)
@@ -26,6 +34,7 @@ public class MainSceneController : MonoBehaviour
 
     void OnDestroy()
     {
+        Instance = null;
         if (GameManager.Instance != null)
             GameManager.Instance.OnStateChanged -= OnStateChanged;
     }
@@ -33,18 +42,17 @@ public class MainSceneController : MonoBehaviour
     private void OnStateChanged(GameState state)
     {
         HideAll();
-        var target = state switch
+        switch (state)
         {
-            GameState.DayStart  => panelDayStart,
-            GameState.QuestBoard => panelQuestBoard,
-            GameState.Dialogue  => panelDialogue,
-            GameState.Result    => panelResult,
-            GameState.Shop      => panelShop,
-            GameState.Ending    => panelEnding,
-            GameState.GameOver  => panelGameOver,
-            _                   => null
-        };
-        target?.SetActive(true);
+            case GameState.DayStart:   panelDayStart?.SetActive(true);   break;
+            case GameState.QuestBoard: panelQuestBoard?.SetActive(true);  break;
+            case GameState.Dialogue:   panelDialogue?.SetActive(true);    break;
+            case GameState.Result:     panelResult?.SetActive(true);      break;
+            case GameState.Shop:       panelShop?.SetActive(true);        break;
+            case GameState.Ending:     panelEnding?.SetActive(true);      break;
+            case GameState.GameOver:   panelGameOver?.SetActive(true);    break;
+            // Minigame: handled by ShowMinigamePanel
+        }
     }
 
     private void HideAll()
@@ -66,15 +74,13 @@ public class MainSceneController : MonoBehaviour
     public void ShowMinigamePanel(MinigameType type)
     {
         HideAll();
-        var target = type switch
+        switch (type)
         {
-            MinigameType.Choice  => panelChoice,
-            MinigameType.Search  => panelSearch,
-            MinigameType.Puzzle  => panelPuzzle,
-            MinigameType.Timing  => panelTiming,
-            MinigameType.Special => panelSpecial,
-            _                    => panelChoice
-        };
-        target?.SetActive(true);
+            case MinigameType.Choice:  panelChoice?.SetActive(true);  break;
+            case MinigameType.Search:  panelSearch?.SetActive(true);  break;
+            case MinigameType.Puzzle:  panelPuzzle?.SetActive(true);  break;
+            case MinigameType.Timing:  panelTiming?.SetActive(true);  break;
+            case MinigameType.Special: panelSpecial?.SetActive(true); break;
+        }
     }
 }

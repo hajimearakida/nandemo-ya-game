@@ -24,11 +24,20 @@ public class ResultUI : MonoBehaviour
     private void OnStateChanged(GameState state)
     {
         gameObject.SetActive(state == GameState.Result);
-    }
+        if (state != GameState.Result) return;
 
-    public void ShowResult(string questName, bool success, int goldReward, int repReward)
-    {
-        resultText.text = success ? $"「{questName}」\n依頼完了！" : $"「{questName}」\n依頼失敗…";
-        rewardText.text = success ? $"+{goldReward}G  評判 +{repReward}" : "評判 -5";
+        var mm = MinigameManager.Instance;
+        if (mm == null) return;
+
+        if (mm.LastSuccess)
+        {
+            resultText.text = $"「{mm.LastQuestName}」\n依頼完了！";
+            rewardText.text = $"+{mm.LastGoldReward}G　評判 +{mm.LastRepReward}";
+        }
+        else
+        {
+            resultText.text = $"「{mm.LastQuestName}」\n依頼失敗…";
+            rewardText.text = "評判 -5";
+        }
     }
 }
