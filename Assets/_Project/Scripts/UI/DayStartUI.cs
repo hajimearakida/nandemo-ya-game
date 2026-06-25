@@ -12,8 +12,12 @@ public class DayStartUI : MonoBehaviour
     void Start()
     {
         if (GameManager.Instance != null)
+        {
             GameManager.Instance.OnStateChanged += OnStateChanged;
-        startButton.onClick.AddListener(() => GameManager.Instance.ChangeState(GameState.QuestBoard));
+            OnStateChanged(GameManager.Instance.CurrentState);
+        }
+        if (startButton != null)
+            startButton.onClick.AddListener(() => GameManager.Instance.ChangeState(GameState.QuestBoard));
     }
 
     void OnDestroy()
@@ -27,11 +31,13 @@ public class DayStartUI : MonoBehaviour
         gameObject.SetActive(state == GameState.DayStart);
         if (state != GameState.DayStart) return;
 
-        var save = GameManager.Instance.CurrentSave;
-        dayText.text = $"{save.currentDay}日目";
-        goldText.text = $"所持金: {save.gold}G";
-        reputationText.text = $"評判: {save.reputation}";
+        var save = GameManager.Instance?.CurrentSave;
+        if (save == null) return;
 
-        QuestManager.Instance.RefreshAvailability();
+        if (dayText != null)        dayText.text = $"{save.currentDay}日目";
+        if (goldText != null)       goldText.text = $"所持金: {save.gold}G";
+        if (reputationText != null) reputationText.text = $"評判: {save.reputation}";
+
+        QuestManager.Instance?.RefreshAvailability();
     }
 }

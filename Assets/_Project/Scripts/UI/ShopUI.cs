@@ -12,7 +12,10 @@ public class ShopUI : MonoBehaviour
     void Start()
     {
         if (GameManager.Instance != null)
+        {
             GameManager.Instance.OnStateChanged += OnStateChanged;
+            OnStateChanged(GameManager.Instance.CurrentState);
+        }
         if (EconomyManager.Instance != null)
             EconomyManager.Instance.OnValuesChanged += Refresh;
         if (closeButton != null)

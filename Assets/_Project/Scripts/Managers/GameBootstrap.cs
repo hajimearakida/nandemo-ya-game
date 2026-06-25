@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class GameBootstrap : MonoBehaviour
 {
@@ -24,11 +25,15 @@ public class GameBootstrap : MonoBehaviour
     void Start()
     {
         if (autoStartNewGame)
-        {
-            if (SaveSystem.HasSaveData())
-                gameManager.LoadGame();
-            else
-                gameManager.StartNewGame();
-        }
+            StartCoroutine(DelayedStart());
+    }
+
+    private IEnumerator DelayedStart()
+    {
+        yield return null; // wait one frame so all Start() subscriptions are registered
+        if (SaveSystem.HasSaveData())
+            gameManager.LoadGame();
+        else
+            gameManager.StartNewGame();
     }
 }

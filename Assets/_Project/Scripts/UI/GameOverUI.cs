@@ -11,7 +11,10 @@ public class GameOverUI : MonoBehaviour
     void Start()
     {
         if (GameManager.Instance != null)
+        {
             GameManager.Instance.OnStateChanged += OnStateChanged;
+            OnStateChanged(GameManager.Instance.CurrentState);
+        }
         if (retryButton != null)
             retryButton.onClick.AddListener(() => GameManager.Instance.StartNewGame());
         if (titleButton != null)

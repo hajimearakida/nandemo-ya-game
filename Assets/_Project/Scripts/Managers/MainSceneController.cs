@@ -29,7 +29,10 @@ public class MainSceneController : MonoBehaviour
     void Start()
     {
         if (GameManager.Instance != null)
+        {
             GameManager.Instance.OnStateChanged += OnStateChanged;
+            OnStateChanged(GameManager.Instance.CurrentState);
+        }
     }
 
     void OnDestroy()

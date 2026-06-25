@@ -14,7 +14,10 @@ public class DialogueUI : MonoBehaviour
     void Start()
     {
         if (GameManager.Instance != null)
+        {
             GameManager.Instance.OnStateChanged += OnStateChanged;
+            OnStateChanged(GameManager.Instance.CurrentState);
+        }
         if (DialogueSystem.Instance != null)
         {
             DialogueSystem.Instance.OnLineDisplayed += ShowLine;

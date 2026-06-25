@@ -11,8 +11,12 @@ public class ResultUI : MonoBehaviour
     void Start()
     {
         if (GameManager.Instance != null)
+        {
             GameManager.Instance.OnStateChanged += OnStateChanged;
-        continueButton.onClick.AddListener(() => GameManager.Instance.ChangeState(GameState.QuestBoard));
+            OnStateChanged(GameManager.Instance.CurrentState);
+        }
+        if (continueButton != null)
+            continueButton.onClick.AddListener(() => GameManager.Instance.ChangeState(GameState.QuestBoard));
     }
 
     void OnDestroy()

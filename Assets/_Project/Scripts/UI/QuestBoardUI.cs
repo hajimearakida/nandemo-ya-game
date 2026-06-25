@@ -16,12 +16,16 @@ public class QuestBoardUI : MonoBehaviour
     void Start()
     {
         if (GameManager.Instance != null)
+        {
             GameManager.Instance.OnStateChanged += OnStateChanged;
+            OnStateChanged(GameManager.Instance.CurrentState);
+        }
         if (EconomyManager.Instance != null)
             EconomyManager.Instance.OnValuesChanged += Refresh;
         if (DialogueSystem.Instance != null)
             DialogueSystem.Instance.OnDialogueCompleted += OnDialogueCompleted;
-        endDayButton.onClick.AddListener(() => GameManager.Instance.AdvanceDay());
+        if (endDayButton != null)
+            endDayButton.onClick.AddListener(() => GameManager.Instance.AdvanceDay());
     }
 
     void OnDestroy()

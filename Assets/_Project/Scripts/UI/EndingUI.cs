@@ -11,8 +11,12 @@ public class EndingUI : MonoBehaviour
     void Start()
     {
         if (GameManager.Instance != null)
+        {
             GameManager.Instance.OnStateChanged += OnStateChanged;
-        titleReturnButton.onClick.AddListener(() => GameManager.Instance.LoadScene("TitleScene"));
+            OnStateChanged(GameManager.Instance.CurrentState);
+        }
+        if (titleReturnButton != null)
+            titleReturnButton.onClick.AddListener(() => GameManager.Instance.LoadScene("TitleScene"));
     }
 
     void OnDestroy()
