@@ -16,6 +16,11 @@ public class GameBootstrap : MonoBehaviour
     [Header("Start Mode")]
     [SerializeField] private bool autoStartNewGame = true;
 
+    void Awake()
+    {
+        DontDestroyOnLoad(gameObject);
+    }
+
     void Start()
     {
         if (autoStartNewGame)

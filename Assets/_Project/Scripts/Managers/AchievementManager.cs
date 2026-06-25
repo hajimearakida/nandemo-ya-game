@@ -23,7 +23,6 @@ public class AchievementManager : MonoBehaviour
     {
         if (Instance != null) { Destroy(gameObject); return; }
         Instance = this;
-        DontDestroyOnLoad(gameObject);
     }
 
     public void Unlock(string achievementId)

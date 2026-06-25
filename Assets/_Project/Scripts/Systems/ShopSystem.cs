@@ -13,7 +13,6 @@ public class ShopSystem : MonoBehaviour
     {
         if (Instance != null) { Destroy(gameObject); return; }
         Instance = this;
-        DontDestroyOnLoad(gameObject);
     }
 
     public ShopItemData[] GetAllItems() => allItems;
