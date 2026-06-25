@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using System.IO;
 
 public static class AssetGeneratorTool
@@ -14,8 +15,11 @@ public static class AssetGeneratorTool
     {
         EnsureDirs();
         var characters = GenerateCharacters();
-        var quests     = GenerateQuests();
-        var shop       = GenerateShopItems();
+        AssetDatabase.SaveAssets();
+        var quests = GenerateQuests();
+        AssetDatabase.SaveAssets();
+        var shop = GenerateShopItems();
+        AssetDatabase.SaveAssets();
         GenerateDialogues(quests);
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
@@ -289,8 +293,8 @@ public static class AssetGeneratorTool
         AssignArray<CharacterManager, CharacterData>("allCharacters",   chars);
         AssignArray<ShopSystem,       ShopItemData> ("allItems",        shop);
 
-        EditorApplication.ExecuteMenuItem("File/Save");
-        Debug.Log("[Generator] シーンへの割り当て完了");
+        EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
+        Debug.Log("[Generator] シーンへの割り当て完了 — Ctrl+S でシーンを保存してください");
     }
 
     private static void AssignArray<TComponent, TAsset>(string fieldName, TAsset[] assets)
