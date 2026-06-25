@@ -4,15 +4,15 @@
 
 ```
 main
-  └── staging
-        └── feature/xxx
+  ├── staging
+  └── feature/xxx
 ```
 
 | ブランチ | 役割 |
 |----------|------|
 | `main` | リリース用。Steamに出すビルドはここから作る |
 | `staging` | 検証環境。複数機能をまとめて動作確認する |
-| `feature/xxx` | 機能単位の作業ブランチ。stagingから切って、stagingにマージする |
+| `feature/xxx` | 機能単位の作業ブランチ。**mainから切って**、stagingで検証後にmainにマージする |
 
 ## 機能ブランチの命名規則
 
@@ -43,8 +43,8 @@ feature/機能名
 ## 作業の流れ
 
 ```
-# 1. stagingから作業ブランチを切る
-git checkout staging
+# 1. mainから作業ブランチを切る
+git checkout main
 git pull
 git checkout -b feature/xxx
 
@@ -52,14 +52,14 @@ git checkout -b feature/xxx
 git add <ファイル>
 git commit -m "説明"
 
-# 3. stagingにマージ（動作確認）
+# 3. stagingにマージして動作確認
 git checkout staging
 git merge feature/xxx
 git push
 
-# 4. 検証OKならstagingをmainにマージ
+# 4. 検証OKならmainにマージ
 git checkout main
-git merge staging
+git merge feature/xxx
 git push
 ```
 
