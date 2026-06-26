@@ -26,7 +26,13 @@ public static class SceneSetupTool
     public static void SetupMinigamePanels()
     {
         var canvas = GameObject.Find("Canvas");
-        if (canvas == null) { Debug.LogError("[SceneSetup] Canvas が見つかりません。先に Setup Main Scene を実行してください。"); return; }
+        if (canvas == null)
+        {
+            Debug.Log("[SceneSetup] Canvas が見つかりません。Setup Main Scene を自動実行します...");
+            SetupMainScene();
+            canvas = GameObject.Find("Canvas");
+            if (canvas == null) { Debug.LogError("[SceneSetup] Canvas の作成に失敗しました。"); return; }
+        }
 
         SetupChoicePanel(canvas.transform.Find("Panel_Minigame_Choice")?.gameObject);
         SetupSearchPanel(canvas.transform.Find("Panel_Minigame_Search")?.gameObject);

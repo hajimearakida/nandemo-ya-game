@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections.Generic;
 
 public class QuestBoardUI : MonoBehaviour
 {
@@ -49,14 +50,32 @@ public class QuestBoardUI : MonoBehaviour
         if (GameManager.Instance?.CurrentSave == null) return;
 
         var save = GameManager.Instance.CurrentSave;
-        dayText.text = $"{save.currentDay}日目 / 60日";
-        goldText.text = $"所持金: {save.gold}G";
-        reputationText.text = $"評判: {save.reputation}";
+        if (dayText != null)        dayText.text = $"── {save.currentDay}日目 / 60日 ──";
+        if (goldText != null)       goldText.text = $"所持金: {save.gold}G";
+        if (reputationText != null) reputationText.text = $"評判: {save.reputation}";
 
-        foreach (Transform child in questListContainer)
-            Destroy(child.gameObject);
+        if (questListContainer != null)
+            foreach (Transform child in questListContainer)
+                Destroy(child.gameObject);
 
-        var quests = QuestManager.Instance.GetAvailableQuests();
+        var quests = QuestManager.Instance?.GetAvailableQuests() ?? new System.Collections.Generic.List<QuestData>();
+
+        if (quests.Count == 0)
+        {
+            // 「クエストなし」プレースホルダー
+            if (questEntryPrefab != null && questListContainer != null)
+            {
+                var placeholder = Instantiate(questEntryPrefab, questListContainer);
+                var label = placeholder.GetComponentInChildren<TextMeshProUGUI>();
+                if (label != null) label.text = "現在受付中の依頼はありません\n（翌日になると新しい依頼が来るかも）";
+                var btn = placeholder.GetComponent<Button>();
+                if (btn != null) btn.interactable = false;
+            }
+            return;
+        }
+
+        if (questEntryPrefab == null || questListContainer == null) return;
+
         foreach (var quest in quests)
         {
             var entry = Instantiate(questEntryPrefab, questListContainer);
