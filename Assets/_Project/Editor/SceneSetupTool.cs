@@ -219,6 +219,7 @@ public static class SceneSetupTool
 
         PrefabUtility.SaveAsPrefabAsset(go, prefabPath);
         Object.DestroyImmediate(go);
+        AssetDatabase.Refresh(); // LoadAssetAtPath が即座に参照できるよう強制更新
         Debug.Log("[SceneSetup] QuestEntry プレハブ作成: " + prefabPath);
     }
 
