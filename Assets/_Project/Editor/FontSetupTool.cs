@@ -17,19 +17,29 @@ public static class FontSetupTool
         var fontPath = AssetDatabase.GUIDToAssetPath(guids[0]);
         var font = AssetDatabase.LoadAssetAtPath<Font>(fontPath);
 
-        // 既存アセットがあれば再利用
         const string savePath = "Assets/_Project/Fonts/NotoSansJP_SDF.asset";
-        var fontAsset = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(savePath);
-        if (fontAsset == null)
+
+        // 既存アセットを削除して作り直す
+        AssetDatabase.DeleteAsset(savePath);
+
+        var fontAsset = TMP_FontAsset.CreateFontAsset(font);
+        fontAsset.atlasPopulationMode = AtlasPopulationMode.Dynamic;
+
+        // メインアセットを保存
+        AssetDatabase.CreateAsset(fontAsset, savePath);
+
+        // アトラステクスチャをサブアセットとして保存（これをしないと Play 時に破棄される）
+        if (fontAsset.atlasTexture != null)
         {
-            fontAsset = TMP_FontAsset.CreateFontAsset(font);
-            fontAsset.atlasPopulationMode = AtlasPopulationMode.Dynamic;
-            AssetDatabase.CreateAsset(fontAsset, savePath);
+            fontAsset.atlasTexture.name = "Atlas";
+            AssetDatabase.AddObjectToAsset(fontAsset.atlasTexture, fontAsset);
         }
-        else
+
+        // マテリアルをサブアセットとして保存
+        if (fontAsset.material != null)
         {
-            fontAsset.atlasPopulationMode = AtlasPopulationMode.Dynamic;
-            EditorUtility.SetDirty(fontAsset);
+            fontAsset.material.name = "Atlas Material";
+            AssetDatabase.AddObjectToAsset(fontAsset.material, fontAsset);
         }
 
         AssetDatabase.SaveAssets();
@@ -55,17 +65,17 @@ public static class FontSetupTool
                 }
                 else
                 {
-                    Debug.LogWarning("[FontSetup] TMP_Settings の m_defaultFontAsset プロパティが見つかりません。手動で設定してください。");
+                    Debug.LogWarning("[FontSetup] m_defaultFontAsset が見つかりません。Edit → Project Settings → TextMeshPro → Default Font Asset に手動で設定してください。");
                 }
             }
         }
         else
         {
-            Debug.LogWarning("[FontSetup] TMP_Settings アセットが見つかりません。Edit → Project Settings → TextMeshPro → Default Font Asset に NotoSansJP_SDF を手動で設定してください。");
+            Debug.LogWarning("[FontSetup] TMP_Settings が見つかりません。Edit → Project Settings → TextMeshPro → Default Font Asset に手動で設定してください。");
         }
 
         Selection.activeObject = fontAsset;
         EditorGUIUtility.PingObject(fontAsset);
-        Debug.Log("[FontSetup] フォントアセット作成完了: " + savePath);
+        Debug.Log("[FontSetup] 完了: " + savePath);
     }
 }
