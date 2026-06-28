@@ -13,6 +13,12 @@ public static class AssetGeneratorTool
     [MenuItem("NandemoYa/Generate All Assets")]
     public static void GenerateAllAssets()
     {
+        if (EditorApplication.isPlaying)
+        {
+            Debug.LogError("[Generator] Play モード中は実行できません。■ Stop してから実行してください。");
+            return;
+        }
+
         EnsureDirs();
         var characters = GenerateCharacters();
         AssetDatabase.SaveAssets();
