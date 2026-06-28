@@ -1,9 +1,25 @@
 using UnityEngine;
 using UnityEditor;
 using TMPro;
+using System.IO;
 
 public static class FontSetupTool
 {
+    [MenuItem("NandemoYa/Clear Save Data (Dev)")]
+    public static void ClearSaveData()
+    {
+        var path = Path.Combine(Application.persistentDataPath, "save.json");
+        if (File.Exists(path))
+        {
+            File.Delete(path);
+            Debug.Log("[Dev] セーブデータを削除しました: " + path);
+        }
+        else
+        {
+            Debug.Log("[Dev] セーブデータはありませんでした。");
+        }
+    }
+
     [MenuItem("NandemoYa/Create Japanese Font Asset")]
     public static void CreateJapaneseFontAsset()
     {
