@@ -19,6 +19,12 @@ public static class AssetGeneratorTool
             return;
         }
 
+        if (Object.FindFirstObjectByType<QuestManager>() == null)
+        {
+            Debug.LogError("[Generator] QuestManager がシーンに見つかりません。\nMainScene.unity を開いてから実行してください。\n(Assets/_Project/Scenes/MainScene.unity をダブルクリック)");
+            return;
+        }
+
         EnsureDirs();
         var characters = GenerateCharacters();
         AssetDatabase.SaveAssets();
